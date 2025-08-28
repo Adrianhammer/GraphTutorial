@@ -9,7 +9,7 @@ var settings = Settings.LoadSettings();
 //Initialize Graph
 InitializeGraph(settings);
 
-await GreetUserAsync();
+//await GreetUserAsync();
 
 int choice = -1;
 
@@ -26,67 +26,82 @@ while (choice != 0)
     {
         choice = int.Parse(Console.ReadLine() ?? string.Empty);
     }
-    catch (System.FormatException)
+    catch (FormatException)
     {
         //Set to invalid value
         choice = -1;
     }
-}
-
-switch (choice)
-{
-    case 0:
-        //exit program
-        Console.WriteLine("Goodbye...");
-        break;
-    case 1:
-        //display access token
-        await DisplayAccessTokenAsync();
-        break;
-    case 2:
-        //List emails from user's inbox
-        await ListInboxAsync();
-        break;
-    case 3:
-        //Send an email message
-        await SendMailAsync();
-        break;
-    case 4:
-        //Run any graph code
-        await MakeGraphCallAsync();
-        break;
-    default:
-        Console.WriteLine("Invalid choice! Please, try again.");
-        break;
+    
+    switch (choice)
+    {
+        case 0:
+            //exit program
+            Console.WriteLine("Goodbye...");
+            break;
+        case 1:
+            //display access token
+            await DisplayAccessTokenAsync();
+            break;
+        case 2:
+            //List emails from user's inbox
+            //await ListInboxAsync();
+            break;
+        case 3:
+            //Send an email message
+            //await SendMailAsync();
+            break;
+        case 4:
+            //Run any graph code
+            //await MakeGraphCallAsync();
+            break;
+        default:
+            Console.WriteLine("Invalid choice! Please, try again.");
+            break;
+    }
 }
 
 
 void InitializeGraph(Settings settings)
 {
-    // TODO
+    GraphHelper.InitializeGraphForUserAuth(settings, (info, cancel) =>
+    {
+        //Display the device code message to the user
+        //This tells them where to go to sign in and provides the code to use
+        Console.WriteLine(info.Message);
+        return Task.FromResult(0);
+    });
 }
 
-async Task GreetUserAsync()
+//async Task GreetUserAsync()
 {
     // TODO
 }
 
 async Task DisplayAccessTokenAsync()
 {
-    // TODO
+    try
+    {
+        var userToken = await GraphHelper.GetUserTokenAsync();
+        Console.WriteLine($"User token: {userToken}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"error getting user access token: {ex.Message}");
+        throw;
+    }
 }
 
-async Task ListInboxAsync()
+//async Task ListInboxAsync()
 {
     // TODO
 }
 
-async Task SendMailAsync()
+//async Task SendMailAsync()
 {
     // TODO
 }
 
-async Task MakeGraphCallAsync()
+//async Task MakeGraphCallAsync()
 {
     // TODO
 }
