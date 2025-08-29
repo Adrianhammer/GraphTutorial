@@ -47,4 +47,66 @@ public class GraphHelper
         var response = await _deviceCodeCredential.GetTokenAsync(context);
         return response.Token;
     }
+
+    public static Task<User?> GetUserAsync()
+    {
+        //Ensure client is not null
+        _ = _userClient ??
+            throw new System.NullReferenceException("Graph has not been initialized for user auth");
+        
+        return _userClient.Me.GetAsync((config) =>
+        {
+            //Only request specific properties
+            config.QueryParameters.Select = new[] { "displayName", "mail", "userPrincipalName" };
+        });
+    }
+
+    public static Task<MessageCollectionResponse?> GetInboxAsync()
+    {
+        _ = _userClient ??
+            throw new System.NullReferenceException("Graph has not been initialized for user auth");
+
+        return _userClient.Me
+            .MailFolders["Inbox"]
+            .Messages
+            .GetAsync((config) =>
+            {
+                config.QueryParameters.Select = new[] { "from", "isRead", "receivedDateTime", "subject" };
+                config.QueryParameters.Top = 3;
+                config.QueryParameters.Orderby = new[] { "receivedDateTime DESC" };
+            });
+    }
+
+    public static async Task SendMailAsync(string subject, string body, string recipient)
+    {
+        _ = _userClient ??
+            throw new System.NullReferenceException("Graph has not been initialized for user auth");
+
+        var message = new Message
+        {
+            Subject = subject,
+            Body = new ItemBody
+            {
+                Content = body,
+                ContentType = BodyType.Text
+            },
+            ToRecipients = new List<Recipient>
+            {
+                new Recipient
+                {
+                    EmailAddress = new EmailAddress
+                    {
+                        Address = recipient
+                    }
+                }
+            }
+        };
+
+        await _userClient.Me
+            .SendMail
+            .PostAsync(new SendMailPostRequestBody
+            {
+                Message = message,
+            });
+    }
 }
