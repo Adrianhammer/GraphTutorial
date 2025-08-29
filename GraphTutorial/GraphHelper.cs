@@ -109,4 +109,23 @@ public class GraphHelper
                 Message = message,
             });
     }
+
+    public static async Task DownloadProfilePictureAsync(string? filePath)
+    {
+        _ = _userClient ??
+            throw new NullReferenceException("Graph has now been initialized for user auth");
+
+        if (string.IsNullOrEmpty(filePath))
+        {
+            Console.WriteLine("File path is empty");
+            return;
+        }
+
+        var photo = await _userClient.Users["{a52499e1-4efd-478f-b74e-3af49fa79dde}"].Photo.Content.GetAsync();
+
+        using (FileStream fs = new FileStream(filePath, FileMode.Create))
+        {
+            await fs.CopyToAsync(photo);
+        }
+    }
 }

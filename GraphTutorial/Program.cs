@@ -167,3 +167,16 @@ async Task SendMailAsync()
 {
     // TODO
 }
+
+async Task DownloadProfilePhotoAsync()
+{
+    try
+    {
+        
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+        throw;
+    }
+}
