@@ -5,10 +5,10 @@ public class CalendarService
 {
     public static async Task ListCalendarEventsAsync()
     {
-        _ =  GraphAuthService._userClient ??
+        _ =  GraphAuthService.UserClient ??
              throw new NullReferenceException("Graph has not been initialized for user auth");
 
-        var result = await GraphAuthService._userClient.Me.Calendar.Events.GetAsync(config =>
+        var result = await GraphAuthService.UserClient.Me.Calendar.Events.GetAsync(config =>
         {
             config.QueryParameters.Select = new[] { "subject", "start", "end" };
             config.QueryParameters.Top = 5;

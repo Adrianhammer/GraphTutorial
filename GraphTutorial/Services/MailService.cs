@@ -7,7 +7,7 @@ public class MailService
 {
     public static async Task SendMailAsync(string subject, string body, string recipient)
     {
-        _ = GraphAuthService._userClient ??
+        _ = GraphAuthService.UserClient ??
             throw new System.NullReferenceException("Graph has not been initialized for user auth");
 
         var message = new Message
@@ -30,7 +30,7 @@ public class MailService
             }
         };
 
-        await GraphAuthService._userClient.Me
+        await GraphAuthService.UserClient.Me
             .SendMail
             .PostAsync(new SendMailPostRequestBody
             {

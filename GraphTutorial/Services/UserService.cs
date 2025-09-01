@@ -6,11 +6,8 @@ public class UserService
 {
     public static Task<User?> GetUserAsync()
     {
-        //Ensure client is not null
-        _ = GraphAuthService._userClient ??
-            throw new System.NullReferenceException("Graph has not been initialized for user auth");
         
-        return GraphAuthService._userClient.Me.GetAsync((config) =>
+        return GraphAuthService.UserClient.Me.GetAsync((config) =>
         {
             //Only request specific properties
             config.QueryParameters.Select = new[] { "displayName", "mail", "userPrincipalName" };
@@ -19,10 +16,10 @@ public class UserService
 
     public static Task<MessageCollectionResponse?> GetInboxAsync()
     {
-        _ = GraphAuthService._userClient ??
+        _ = GraphAuthService.UserClient ??
             throw new System.NullReferenceException("Graph has not been initialized for user auth");
 
-        return GraphAuthService._userClient.Me
+        return GraphAuthService.UserClient.Me
             .MailFolders["Inbox"]
             .Messages
             .GetAsync((config) =>
@@ -35,10 +32,10 @@ public class UserService
     
     public static async Task DownloadProfilePictureAsync(string filePath)
     {
-        _ = GraphAuthService._userClient ??
+        _ = GraphAuthService.UserClient ??
             throw new NullReferenceException("Graph has now been initialized for user auth");
 
-        var photo = await GraphAuthService._userClient.Users["{a52499e1-4efd-478f-b74e-3af49fa79dde}"].Photo.Content.GetAsync();
+        var photo = await GraphAuthService.UserClient.Users["{a52499e1-4efd-478f-b74e-3af49fa79dde}"].Photo.Content.GetAsync();
         //var photo = await _userClient.Me.Photo.Content.GetAsync();
 
         try
@@ -58,5 +55,11 @@ public class UserService
             Console.WriteLine(e.Message);
             throw;
         }
+    }
+
+    public static async Task SearchOneDrive(string word)
+    {
+        _ = GraphAuthService.UserClient ??
+            throw new NullReferenceException("Graph has not been initialized for user auth");
     }
 }

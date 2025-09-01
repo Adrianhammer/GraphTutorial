@@ -11,7 +11,14 @@ public class GraphAuthService
     //User auth token credential
     private static DeviceCodeCredential? _deviceCodeCredential;
     //Client configured with user authentication
-    public static GraphServiceClient? _userClient;
+    private static GraphServiceClient? _userClient;
+    
+    //Ensure Client is not null
+    public static GraphServiceClient UserClient
+    {
+        get => _userClient ??
+               throw new NullReferenceException("Graph has not been initialized for user auth.");
+    }
 
     public static void InitializeGraphForUserAuth(Settings settings,
         Func<DeviceCodeInfo, CancellationToken, Task> deviceCodePrompt)
@@ -35,7 +42,7 @@ public class GraphAuthService
         //Ensure credential isn`t null
         //_ is discard. Same as checking "if _deviceCodeCredential == null"
         _ = _deviceCodeCredential ??
-            throw new System.NullReferenceException("Graph has not been initialized for user auth.");
+            throw new NullReferenceException("Graph has not been initialized for user auth.");
         
         //Ensure scopes isn`t null
         _ = _settings?.GraphUserScopes ?? throw new System.ArgumentException("Argument 'scopes' cannot be null.");
@@ -45,4 +52,5 @@ public class GraphAuthService
         var response = await _deviceCodeCredential.GetTokenAsync(context);
         return response.Token;
     }
+    
 }
