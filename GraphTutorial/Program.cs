@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using GraphTutorial;
+using GraphTutorial.Services;
 
 Console.WriteLine(".NET Graph Tutorial\n");
 
@@ -68,7 +69,7 @@ while (choice != 0)
 
 void InitializeGraph(Settings settings)
 {
-    GraphHelper.InitializeGraphForUserAuth(settings, (info, cancel) =>
+    GraphAuthService.InitializeGraphForUserAuth(settings, (info, cancel) =>
     {
         //Display the device code message to the user
         //This tells them where to go to sign in and provides the code to use
@@ -81,7 +82,7 @@ async Task GreetUserAsync()
 {
     try
     {
-        var user = await GraphHelper.GetUserAsync();
+        var user = await UserService.GetUserAsync();
         Console.WriteLine($@"Hello, {user?.DisplayName}!");
         //Work/school accounts - email is Mail property
         //Personal accounts - email is in UserPrincipalName
@@ -98,7 +99,7 @@ async Task DisplayAccessTokenAsync()
 {
     try
     {
-        var userToken = await GraphHelper.GetUserTokenAsync();
+        var userToken = await GraphAuthService.GetUserTokenAsync();
         Console.WriteLine($"User token: {userToken}");
     }
     catch (Exception ex)
@@ -112,7 +113,7 @@ async Task ListInboxAsync()
 {
     try
     {
-        var messagePage = await GraphHelper.GetInboxAsync();
+        var messagePage = await UserService.GetInboxAsync();
 
         if (messagePage?.Value == null)
         {
@@ -146,7 +147,7 @@ async Task SendMailAsync()
     {
         //Send mail to the signed-in user
         //Get the user for their email address
-        var user = await GraphHelper.GetUserAsync();
+        var user = await UserService.GetUserAsync();
         
         var userEmail = user?.Mail ?? user?.UserPrincipalName;
 
@@ -156,7 +157,7 @@ async Task SendMailAsync()
             return;
         }
         
-        await GraphHelper.SendMailAsync("Testing Microsoft Graph",
+        await MailService.SendMailAsync("Testing Microsoft Graph",
             "Hello World", userEmail);
 
         Console.WriteLine("Mail sent!");
@@ -180,7 +181,7 @@ async Task DownloadProfilePhotoAsync()
     
     try
     {
-        await GraphHelper.DownloadProfilePictureAsync(assetsPath);
+        await UserService.DownloadProfilePictureAsync(assetsPath);
     }
     catch (Exception e)
     {
@@ -193,7 +194,7 @@ async Task ListCalendarEventsAsync()
 {
     try
     {
-        await GraphHelper.ListCalendarEventsAsync();
+        await CalendarService.ListCalendarEventsAsync();
     }
     catch (Exception e)
     {
