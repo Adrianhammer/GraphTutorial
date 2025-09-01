@@ -59,7 +59,18 @@ public class UserService
 
     public static async Task SearchOneDrive(string word)
     {
-        _ = GraphAuthService.UserClient ??
-            throw new NullReferenceException("Graph has not been initialized for user auth");
+        var result = await GraphAuthService.UserClient.Me.Drive.Root.SearchWithQ($"{word}").GetAsSearchWithQGetResponseAsync();
+
+        if (result?.Value == null || !result.Value.Any())
+        {
+            Console.WriteLine($"Found nothing containing {word}");
+            return;
+        }
+
+        foreach (var items in result.Value)
+        {
+            Console.WriteLine($"Name: {items.Name}");
+            Console.WriteLine($"    Search Result: {items.SearchResult}");
+        }
     }
 }

@@ -23,6 +23,7 @@ while (choice != 0)
     Console.WriteLine("3. Send mail");
     Console.WriteLine("4. Download user photo");
     Console.WriteLine("5. List my calendar events");
+    Console.WriteLine("6. Search one drive with one word");
 
     try
     {
@@ -59,6 +60,10 @@ while (choice != 0)
         case 5:
             //List upcoming calendar events
             await ListCalendarEventsAsync();
+            break;
+        case 6:
+            //Search one drive with one word
+            await SearchOneDriveAsync();
             break;
         default:
             Console.WriteLine("Invalid choice! Please, try again.");
@@ -195,6 +200,28 @@ async Task ListCalendarEventsAsync()
     try
     {
         await CalendarService.ListCalendarEventsAsync();
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e.Message);
+        throw;
+    }
+}
+
+async Task SearchOneDriveAsync()
+{
+    try
+    {
+        Console.WriteLine("Search one drive with one word: ");
+        var word = Console.ReadLine();
+        
+        while (string.IsNullOrEmpty(word))
+        {
+            Console.WriteLine("Please enter search term with one word: ");
+            word = Console.ReadLine();
+        }
+        
+        await UserService.SearchOneDrive(word);
     }
     catch (Exception e)
     {
