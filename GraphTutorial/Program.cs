@@ -53,6 +53,7 @@ while (choice != 0)
         case 4:
             //Run any graph code
             //await MakeGraphCallAsync();
+            await DownloadProfilePhotoAsync();
             break;
         default:
             Console.WriteLine("Invalid choice! Please, try again.");
@@ -170,13 +171,21 @@ async Task SendMailAsync()
 
 async Task DownloadProfilePhotoAsync()
 {
+    var assetsPath = Path.Combine(AppContext.BaseDirectory, "photo.jpg");
+
+    if (string.IsNullOrEmpty(assetsPath))
+    {
+        Console.WriteLine("File path could not be found");
+        return;
+    }
+    
     try
     {
-        
+        await GraphHelper.DownloadProfilePictureAsync(assetsPath);
     }
     catch (Exception e)
     {
-        Console.WriteLine(e);
+        Console.WriteLine(e.Message);
         throw;
     }
 }
