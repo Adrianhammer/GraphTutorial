@@ -20,7 +20,8 @@ while (choice != 0)
     Console.WriteLine("1. Display access token");
     Console.WriteLine("2. List my inbox");
     Console.WriteLine("3. Send mail");
-    Console.WriteLine("4. Make a graph call");
+    Console.WriteLine("4. Download user photo");
+    Console.WriteLine("5. List my calendar events");
 
     try
     {
@@ -51,9 +52,12 @@ while (choice != 0)
             await SendMailAsync();
             break;
         case 4:
-            //Run any graph code
-            //await MakeGraphCallAsync();
+            //Download profile photo
             await DownloadProfilePhotoAsync();
+            break;
+        case 5:
+            //List upcoming calendar events
+            await ListCalendarEventsAsync();
             break;
         default:
             Console.WriteLine("Invalid choice! Please, try again.");
@@ -164,11 +168,6 @@ async Task SendMailAsync()
     }
 }
 
-//async Task MakeGraphCallAsync()
-{
-    // TODO
-}
-
 async Task DownloadProfilePhotoAsync()
 {
     var assetsPath = Path.Combine(AppContext.BaseDirectory, "photo.jpg");
@@ -182,6 +181,19 @@ async Task DownloadProfilePhotoAsync()
     try
     {
         await GraphHelper.DownloadProfilePictureAsync(assetsPath);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e.Message);
+        throw;
+    }
+}
+
+async Task ListCalendarEventsAsync()
+{
+    try
+    {
+        await GraphHelper.ListCalendarEventsAsync();
     }
     catch (Exception e)
     {

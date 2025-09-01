@@ -1,4 +1,5 @@
-﻿using Azure.Core;
+﻿using System.Collections;
+using Azure.Core;
 using Azure.Identity;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
@@ -134,6 +135,30 @@ public class GraphHelper
         {
             Console.WriteLine(e.Message);
             throw;
+        }
+    }
+
+    public static async Task ListCalendarEventsAsync()
+    {
+        _ =  _userClient ??
+             throw new NullReferenceException("Graph has not been initialized for user auth");
+
+        var result = await _userClient.Me.Calendar.Events.GetAsync(config =>
+        {
+            config.QueryParameters.Select = new[] { "subject", "start", "end" };
+            config.QueryParameters.Top = 5;
+        });
+
+        if (result == null)
+        {
+            Console.WriteLine("No calendar events found");
+        }
+
+        foreach (var events in result.Value)
+        {
+            Console.WriteLine($"Subject: {events.Subject}");
+            Console.WriteLine($"    Start time: {events.Start.DateTime}");
+            Console.WriteLine($"    End time: {events.End.DateTime}");
         }
     }
 }
